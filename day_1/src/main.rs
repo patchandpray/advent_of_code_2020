@@ -11,7 +11,14 @@ fn main() {
     // Collect newline delimited inputs into a vector of things we can calculate on
     let inputs = inputs.lines().map(|line| line.parse::<u64>()).collect::<Result<Vec<u64>, _>>().unwrap();
 
-    let result = get_2020(inputs);
+    let result = get_2020_double(&inputs);
+
+    match result {
+        Some(value) => println!("{}", value),
+        None => println!("No result"),
+    };
+
+    let result = get_2020_triple(&inputs);
 
     match result {
         Some(value) => println!("{}", value),
@@ -19,14 +26,28 @@ fn main() {
     };
 }
 
-fn get_2020(inputs: Vec<u64>) -> Option<u64> {
+fn get_2020_double(inputs: &Vec<u64>) -> Option<u64> {
     // Get an item from inputs, calculate versus all other items in inputs if sum == 2020
     // If sum == 2020 multiply the inputs
-    for x in &inputs {
-        for y in &inputs {
+    for x in inputs {
+        for y in inputs {
             if x + y == 2020 {
                 println!("{} + {} = 2020", x, y);
                 return Some(x * y)
+            }
+        }
+    };
+    None
+}
+
+fn get_2020_triple(inputs: &Vec<u64>) -> Option<u64> {
+    for x in inputs {
+        for y in inputs {
+            for z in inputs {
+                if x + y + z == 2020 {
+                    println!("{} + {} + {} = 2020", x, y, z);
+                    return Some(x * y * z)
+                }
             }
         }
     };
