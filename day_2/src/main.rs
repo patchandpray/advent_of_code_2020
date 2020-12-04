@@ -22,17 +22,27 @@ impl PasswordItem {
         let c = captures.get(3).unwrap().as_str().chars().next().unwrap();
         let password = captures.get(4).unwrap().as_str().to_string();
 
-
         PasswordItem{min, max, c, password}
     }
 
-    pub fn is_valid(&self) -> bool {
+    pub fn is_valid_old_policy(&self) -> bool {
         // check if char occurs min
         // check if char occurs max
 
         let count = &self.password.matches(self.c).count();
         !(count < &self.min || count > &self.max)
+    }
 
+    pub fn is_valid_new_policy(&self) -> bool {
+        // check if c occurs on any of the two allowed positions(min, max) but not both or none
+
+        self.password.char_indices().fold(false, |valid, (i, c)| {
+            if i == self.min-1 || i == self.max-1 {
+                valid ^ (c == self.c)
+            } else {
+                valid
+            }
+        })
     }
 }
 
@@ -54,10 +64,11 @@ fn main() {
     // ...
     // apply policy on password
     // count occurances of passwords adhering to policy
-    let valid_passwords: usize = password_items.iter().filter(|item| item.is_valid()).count();
+    let valid_passwords: usize = password_items.iter().filter(|item| item.is_valid_old_policy()).count();
+    println!("valid passwords old policy: {}", valid_passwords);
 
-    println!("valid passwords: {}", valid_passwords);
-
+    let valid_passwords: usize = password_items.iter().filter(|item| item.is_valid_new_policy()).count();
+    println!("valid passwords new policy: {}", valid_passwords);
     // ...
     // go on holiday to tropical island 🌴
 
