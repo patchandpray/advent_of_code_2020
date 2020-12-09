@@ -14,6 +14,7 @@ impl BoardingPass {
 
         BoardingPass { row, column }
     }
+
     fn seat_id(&self) -> isize {
         self.row * 8 + self.column
     }
@@ -30,11 +31,19 @@ fn main() {
     let input = fs::read_to_string(filename).unwrap();
 
     // transform string to binary representation
-    let input: Vec<String> = input.lines().map(|line| to_binary(line)).collect();
+    let bps: Vec<BoardingPass> = input.lines().map(|line| BoardingPass::new(to_binary(line).as_ref())).collect();
 
-    let bps: Vec<BoardingPass> = input.iter().map(|line| BoardingPass::new(line)).collect();
-
+    // get seat id's
     let highest_seat_id: isize = bps.iter().map(|bp| bp.seat_id()).max().unwrap();
+    let lowest_seat_id: isize = bps.iter().map(|bp| bp.seat_id()).min().unwrap();
 
     println!("Highest seat id: {}", highest_seat_id);
+    println!("Lowest seat id: {}", lowest_seat_id);
+
+    // determine your seat
+    for i in lowest_seat_id..highest_seat_id {
+        if !(bps.iter().any(|bp| bp.seat_id() == i)) {
+            println!("Your seat id: {}", i);
+        }
+    }
 }
